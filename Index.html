@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URE Votorantim - Acompanhamento Formativo</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 flex flex-col min-h-screen">
+
+  <!-- Header / Navbar -->
+  <header class="bg-sky-900 text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-sky-600 p-2.5 rounded-xl shadow-inner">
+          <i class="fa-solid fa-graduation-cap text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">URE Votorantim</h1>
+          <p class="text-xs text-sky-200">Acompanhamento Formativo Escolar</p>
+        </div>
+      </div>
+
+      <!-- Abas de Navegação com Evento onclick -->
+      <nav class="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 w-full md:w-auto text-xs md:text-sm font-medium">
+        <button type="button" onclick="switchTab('agenda')" id="tab-agenda" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 transition bg-sky-800 text-white shadow">
+          <i class="fa-solid fa-calendar-days"></i> Agenda
+        </button>
+        <button type="button" onclick="switchTab('relatorios')" id="tab-relatorios" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-800/60 transition text-sky-100">
+          <i class="fa-solid fa-file-lines"></i> Relatórios
+        </button>
+        <button type="button" onclick="switchTab('fotos')" id="tab-fotos" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-800/60 transition text-sky-100">
+          <i class="fa-solid fa-camera"></i> Fotos
+        </button>
+        <button type="button" onclick="switchTab('bi')" id="tab-bi" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-800/60 transition text-sky-100">
+          <i class="fa-solid fa-chart-line"></i> Painel BI
+        </button>
+        <button type="button" onclick="switchTab('apoio')" id="tab-apoio" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-sky-800/60 transition text-sky-100">
+          <i class="fa-solid fa-chalkboard-user"></i> Apoio a Professores
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- 1. AGENDA FORMATIVA -->
+    <section id="sec-agenda" class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Agenda de Visitas Formativas</h2>
+          <p class="text-xs text-slate-500">Planejamento e acompanhamento presencial das escolas da URE Votorantim</p>
+        </div>
+        <button onclick="openModal('modal-agenda')" class="bg-sky-700 hover:bg-sky-800 text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-plus"></i> Agendar Visita
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-3" id="agenda-list"></div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="font-semibold text-slate-700 border-b pb-2 flex items-center gap-2">
+            <i class="fa-solid fa-filter text-sky-700"></i> Filtrar Visitas
+          </h3>
+          <div>
+            <label class="text-xs font-medium text-slate-600 block mb-1">Filtrar por Escola:</label>
+            <select id="filter-escola-agenda" onchange="renderAgenda()" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+              <option value="">Todas as Escolas</option>
+              <option value="EE Pedro Augusto Rangel">EE Pedro Augusto Rangel</option>
+              <option value="EE Profª Clotilde Beline">EE Profª Clotilde Beline</option>
+              <option value="EE Prof. Wilson Prestes">EE Prof. Wilson Prestes</option>
+              <option value="EE Senador Lacerda Franco">EE Senador Lacerda Franco</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. RELATÓRIOS -->
+    <section id="sec-relatorios" class="space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Relatórios de Acompanhamento Formativo</h2>
+          <p class="text-xs text-slate-500">Documentação pedagógica e atas de visita das unidades escolares</p>
+        </div>
+        <button onclick="openModal('modal-relatorio')" class="bg-sky-700 hover:bg-sky-800 text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-upload"></i> Anexar Novo Relatório
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="relatorios-list"></div>
+    </section>
+
+    <!-- 3. FOTOS -->
+    <section id="sec-fotos" class="space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Galeria de Registros Fotográficos</h2>
+          <p class="text-xs text-slate-500">Evidências de ações formativas e acompanhamentos presenciais</p>
+        </div>
+        <button onclick="openModal('modal-foto')" class="bg-sky-700 hover:bg-sky-800 text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-camera"></i> Anexar Fotos
+        </button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="fotos-list"></div>
+    </section>
+
+    <!-- 4. PAINEL BI -->
+    <section id="sec-bi" class="space-y-6 hidden">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Painel do BI - Indicadores da URE Votorantim</h2>
+          <p class="text-xs text-slate-500">Monitoramento contínuo de frequência e pontos de atenção por disciplina</p>
+        </div>
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> BI Integrado
+        </span>
+      </div>
+
+      <!-- KPIs -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="bg-sky-100 text-sky-800 p-3 rounded-xl"><i class="fa-solid fa-user-check text-xl"></i></div>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Frequência Média</p>
+            <p class="text-2xl font-extrabold text-slate-800">88.4%</p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="bg-amber-100 text-amber-800 p-3 rounded-xl"><i class="fa-solid fa-triangle-exclamation text-xl"></i></div>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Atenção Crítica</p>
+            <p class="text-2xl font-extrabold text-amber-600">Matemática</p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="bg-emerald-100 text-emerald-800 p-3 rounded-xl"><i class="fa-solid fa-school text-xl"></i></div>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Escolas URE</p>
+            <p class="text-2xl font-extrabold text-slate-800">14 Escolas</p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="bg-indigo-100 text-indigo-800 p-3 rounded-xl"><i class="fa-solid fa-handshake text-xl"></i></div>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Apoios Realizados</p>
+            <p class="text-2xl font-extrabold text-indigo-700">32 Ações</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-chart-column text-sky-700"></i> Frequência Escolar por Unidade (%)
+          </h3>
+          <div class="relative h-64">
+            <canvas id="chartFrequencia"></canvas>
+          </div>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-amber-600"></i> Pontos de Atenção por Disciplina
+          </h3>
+          <div class="relative h-64">
+            <canvas id="chartDisciplinas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. APOIO AOS PROFESSORES -->
+    <section id="sec-apoio" class="space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Apoio Presencial aos Professores</h2>
+          <p class="text-xs text-slate-500">Acompanhamento pedagógico individual e devolutivas em sala de aula</p>
+        </div>
+        <button onclick="openModal('modal-apoio')" class="bg-sky-700 hover:bg-sky-800 text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-user-plus"></i> Registrar Novo Apoio
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-slate-700 uppercase text-xs font-semibold border-b">
+              <tr>
+                <th class="p-4">Professor(a)</th>
+                <th class="p-4">Disciplina / Escola</th>
+                <th class="p-4">Data do Apoio</th>
+                <th class="p-4">Ação / Foco</th>
+                <th class="p-4">Relatório Anexo</th>
+                <th class="p-4 text-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="apoio-list" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAIS -->
+  <div id="modal-agenda" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-bold text-slate-800">Agendar Visita Formativa</h3>
+        <button onclick="closeModal('modal-agenda')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="salvarAgenda(event)" class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-slate-700">Nome da Escola:</label>
+          <input type="text" id="agenda-escola" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Ex: EE Pedro Augusto Rangel">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Data:</label>
+          <input type="date" id="agenda-data" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Objetivo da Formação:</label>
+          <textarea id="agenda-objetivo" required rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Ex: Acompanhamento de Metodologias Ativas"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-agenda')" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs font-medium bg-sky-700 hover:bg-sky-800 text-white rounded-lg">Salvar Visita</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-relatorio" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-bold text-slate-800">Anexar Relatório Formativo</h3>
+        <button onclick="closeModal('modal-relatorio')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="salvarRelatorio(event)" class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-slate-700">Título do Relatório:</label>
+          <input type="text" id="relatorio-titulo" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Ex: Relatório Formativo - 1º Bimestre">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Escola:</label>
+          <input type="text" id="relatorio-escola" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Link do Documento (Drive/Nuvem):</label>
+          <input type="url" id="relatorio-link" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="https://drive.google.com/...">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-relatorio')" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs font-medium bg-sky-700 hover:bg-sky-800 text-white rounded-lg">Anexar Documento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-foto" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-bold text-slate-800">Anexar Imagem / Foto</h3>
+        <button onclick="closeModal('modal-foto')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="salvarFoto(event)" class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-slate-700">Legenda da Foto:</label>
+          <input type="text" id="foto-titulo" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Ex: Oficina Pedagógica de Matemática">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Escola:</label>
+          <input type="text" id="foto-escola" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">URL da Imagem:</label>
+          <input type="url" id="foto-url" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-foto')" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs font-medium bg-sky-700 hover:bg-sky-800 text-white rounded-lg">Salvar Foto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-apoio" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-bold text-slate-800">Registrar Apoio Presencial</h3>
+        <button onclick="closeModal('modal-apoio')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="salvarApoio(event)" class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-slate-700">Nome do(a) Professor(a):</label>
+          <input type="text" id="apoio-prof" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-slate-700">Disciplina:</label>
+            <input type="text" id="apoio-disc" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-slate-700">Data do Apoio:</label>
+            <input type="date" id="apoio-data" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Escola:</label>
+          <input type="text" id="apoio-escola" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Ação / Devolutiva Pedagógica:</label>
+          <textarea id="apoio-foco" required rows="2" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none"></textarea>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-700">Link do Relatório de Apoio:</label>
+          <input type="url" id="apoio-link" required class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="https://drive.google.com/...">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-apoio')" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs font-medium bg-sky-700 hover:bg-sky-800 text-white rounded-lg">Salvar Registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t mt-8 py-4 text-center text-xs text-slate-500">
+    <p>URE Votorantim &copy; 2026 - Sistema de Acompanhamento Formativo das Escolas</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
